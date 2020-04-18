@@ -41,24 +41,23 @@
     scope="public_profile,email"
     onlogin="checkLoginState();">
   </fb:login-button>
+  <% unless @group.nil? %>
   <div>
    <table>
-   <% feed = @feed_first %>
-   <% count = 0 %>
-   <% until feed.nil? do %>
-    <% feed.each do |f| %>
-     <tr>
-      <td><%= count %></td>
-      <td><%= f['id'] %></td>
-      <td><%= f['updated_time'] %></td>
-     </tr>
-     <% count += 1 %>
-     <% break if count > 100 %>
-    <% end %>
-    <% break if count > 100 %>
-    <% count += 1 %>
-   <% end %>
+    <tr>
+     <td>name</td>
+     <td><%= @group['name'] %></td>
+    </tr>
+    <tr>
+     <td>member_count</td>
+     <td><%= @group['member_count'] %></td>
+    </tr>
    </table>
   </div>
+  <% end %>
+  <% unless @error.nil? %>
+  <blockquote><%= @error %></blockquote>
+  <% end %>
+
 </body>
 </html>
