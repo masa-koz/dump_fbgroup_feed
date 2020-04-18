@@ -1,3 +1,4 @@
-vendors/*
-Genfile.lock
+vendor/*
+Gemfile.lock
 .bundle/*
+.ruby-version
