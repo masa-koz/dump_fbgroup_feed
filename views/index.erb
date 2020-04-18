@@ -1,0 +1,64 @@
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '2988730911189175',
+        cookie     : true,
+        xfbml      : true,
+        version    : 'v6.0'
+      });
+      FB.AppEvents.logPageView();   
+      FB.getLoginStatus(function(response) {
+        console.log(response);
+        if (response.status === 'connected') {
+          console.log(response.authResponse.accessToken);
+          document.cookie = 'fb_access_token=' + response.authResponse.accessToken;
+        }
+      });
+    };
+    (function(d, s, id){
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {return;}
+      js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+    function checkLoginState() {
+      FB.getLoginStatus(function(response) {
+        console.log(response);
+        if (response.status === 'connected') {
+          console.log(response.authResponse.accessToken);
+          document.cookie = 'fb_access_token=' + response.authResponse.accessToken;
+        }
+      });
+    }
+  </script>
+  <fb:login-button 
+    scope="public_profile,email"
+    onlogin="checkLoginState();">
+  </fb:login-button>
+  <div>
+   <table>
+   <% feed = @feed_first %>
+   <% count = 0 %>
+   <% until feed.nil? do %>
+    <% feed.each do |f| %>
+     <tr>
+      <td><%= count %></td>
+      <td><%= f['id'] %></td>
+      <td><%= f['updated_time'] %></td>
+     </tr>
+     <% count += 1 %>
+     <% break if count > 100 %>
+    <% end %>
+    <% break if count > 100 %>
+    <% count += 1 %>
+   <% end %>
+   </table>
+  </div>
+</body>
+</html>
