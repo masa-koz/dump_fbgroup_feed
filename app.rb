@@ -44,9 +44,10 @@ class App < Sinatra::Base
       }
 
       reactions = ['like', 'love', 'wow', 'haha', 'sad', 'angry', 'thankful']
+      #reactions = ['like']
       reactions_fields = {
         'id' => [],
-        'summary' => ['total_count', 'viewer_reaction'],
+        'reactions' => ['summary'],
       }
 
       graph = Koala::Facebook::API.new(cookies[:fb_access_token])
@@ -82,6 +83,27 @@ class App < Sinatra::Base
         id = v.fetch('id') {|k1| "" }
         posts[id] = Hash[feed_fields.keys.zip(vals)]
       end
+
+      reactions.each do |type|
+        raw_json[type]['data'].each do |v|
+          STDERR.puts v.inspect
+          vals =
+          reactions_fields.keys.collect {|k1|
+            if v.key?(k1)
+              if reactions_fields[k1].size > 0
+                Hash[ reactions_fields[k1].zip(v[k1].fetch_values(*reactions_fields[k1]){ |k2| "" }) ]
+              else
+                v[k1]
+              end
+            else
+              ""
+            end
+          }
+          id = v.fetch('id') {|k1| "" }
+          posts[id][type] = Hash[reactions_fields.keys.zip(vals)]
+          STDERR.puts id.inspect, Hash[reactions_fields.keys.zip(vals)].inspect
+        end
+      end
 =begin
       feed = feed_first
       while feed.size > 0
@@ -92,7 +114,7 @@ class App < Sinatra::Base
         feed = feed.next_page
       end
 =end
-      #json_txt << json.to_json
+      #json_txt << raw_json.to_json
       json_txt << posts.to_json
     end
     json_txt
